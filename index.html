@@ -216,6 +216,12 @@
 			li.innerHTML = camperListItemTemplate
 			li.querySelector('.remove').addEventListener('click', removeAttendee)
 			li.querySelector('.remove').style.display = 'block'
+			// update the 'name' attribute to include the person id & avoid form confusion later?
+			Array.from(li.querySelectorAll('[name]')).forEach(input => {
+				input.setAttribute('name', input.name + personID)
+			})
+
+
 			camperList.append(li);
 			document.querySelector(`[data-person-id="${personID}"]`).querySelector("input").focus()
 			personID++
