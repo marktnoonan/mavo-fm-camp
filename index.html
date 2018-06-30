@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>John McCutcheon Songwriting Camp</title>
+	<style>
+		body {
+			text-align: center;
+			font-family: sans-serif;
+			line-height: 1.5em;
+		}
+
+
+		fieldset {
+			border: 0;
+		}
+
+		.camper-list {
+			display: inline-block;
+			text-align: left;
+			list-style-type: none;
+			width: 100%;
+			margin: 0;
+			padding-left: 0;
+		}
+
+		.camper {
+			background-color: rgb(233, 252, 245);
+			padding: 20px;
+			border: 1px solid rgba(0, 0, 0, 0.2);
+			border-radius: 4px;
+			margin-bottom: 10px;
+		}
+
+		#app {
+			max-width: 500px;
+			margin: 0 auto;
+		}
+
+		input[type=text] {
+			border-radius: 4px;
+			border: 1px solid rgba(0, 0, 0, 0.2);
+			width: 100%;
+			font-size: 16px;
+			line-height: 1.7em;
+		}
+
+		.radio label {
+			font-weight: normal;
+		}
+
+		label {
+			font-size: 14px;
+			font-weight: bold;
+		}
+
+		select,
+		button {
+			font-size: 14px;
+		}
+
+		button {
+			font-weight: bold;
+			padding: 12px;
+			border: 1px solid rgba(0, 0, 0, 0.2);
+			border-radius: 50px;
+			color: rgba(50, 50, 50, 0.9)
+		}
+
+		.radio {
+			padding-left: 20px;
+			font-weight: bold;
+			font-size: 14px;
+		}
+
+		/* Button styles */
+
+		.add-wrapper {
+			text-align: right;
+		}
+
+		.add {
+			background-color: rgb(253, 248, 203);
+		}
+
+		.submit {
+			background-color: rgb(234, 255, 203)
+		}
+
+		.remove {
+			height: 20px;
+			width: 20px;
+			padding: 3px;
+			font-size: 10px;
+			margin: 0 0 0 auto;
+			background-color: rgb(253, 222, 233);
+			display: none;
+			/* not displaying by default */
+		}
+
+		.big {
+			font-size: 30px;
+			line-height: 0;
+			font-weight: normal;
+			color: rgba(100, 100, 100, 0.9);
+			display: inline-block;
+			transform: translateY(3px)
+		}
+	</style>
+</head>
+
+<body>
+	<div mv-app mv-autosave mv-storage="https://github.com/marktnoonan/fm-mavo-data" id="app">
+
+		<h1 property="title"></h1>
+		<p property="paragraph"></p>
+		<form action="">
+
+			<ul class="camper-list" id="camper-list">
+				<li>
+					<fieldset class="camper">
+						<button type="button" class="remove">X</button>
+						<label>
+							<span property="name-label"></span>
+							<br>
+							<input type="text" name="name" required />
+						</label>
+						<br>
+						<br>
+						<div class="radio">
+							<span property="radio-label"></span>
+							<br>
+							<label>
+								<input type="radio" name="status" value="camper">
+								<span property="camping-label"></span>
+							</label>
+							<br>
+							<label>
+								<input type="radio" name="status" value="guest">
+								<span property="camping-label"></span>
+							</label>
+						</div>
+						<br>
+						<label>
+							<span property="allergies-label"></span>
+							<br>
+							<input type="text" name="allergies-or-restrictions" />
+						</label>
+						<br>
+						<br>
+						<label>
+							<span property="notes-label"></span>
+							<br>
+							<input type="text" name="notes" />
+						</label>
+						<br>
+						<br>
+					</fieldset>
+				</li>
+			</ul>
+			<div class="add-wrapper">
+				<button type="button" id="add" class="add">
+					<span class="big">+</span> Add another person</button>
+			</div>
+			<br>
+			<label>
+				<span property="lodging-label">Lodging Preference for you or your group:</span>
+				<br>
+				<select name="lodging" id="" property="mv-lodging" mv-storage="#display">
+					<option value="dorm" default>Dorm (no extra charge)</option>
+					<option value="sharedWorkshop">Shared Twin in Workshop Building ($20/night per person)</option>
+					<option value="privateWorkshop">Private in Workshop Building ($30/night per person)</option>
+					<option value="lodge">Lodge (most, but not all, rooms are private) ($30/night per person)</option>
+					<option value="contact">I need more information, please follow up with me.</option>
+
+				</select>
+			</label>
+			<br>
+			<br>
+			<p id="display">
+
+			</p>
+
+			<p>
+				<button id="submit" type="submit" class="submit">Submit</button>
+			</p>
+		</form>
+
+
+	</div>
+	<script src="https://get.mavo.io/mavo.js"></script>
+	<link rel="stylesheet" href="https://get.mavo.io/mavo.css">
+	<script>
+
+		let personID = 1
+		const form = document.querySelector('form')
+		const camperList = document.querySelector('#camper-list')
+		let liveData = []
+		let camperListItemTemplate
+
+		function submitForm(submitEvent) {
+			submitEvent.preventDefault();
+			liveData = []
+			Array.from(form.querySelectorAll('fieldset')).forEach((fieldset, index) => {
+				addAttendeeToLiveData(fieldset.elements, index)
+			})
+			console.log(liveData)
+		}
+
+		function addAttendeeToForm() {
+			let li = document.createElement('li')
+			li.setAttribute('data-person-id', personID)
+			li.innerHTML = camperListItemTemplate
+			li.querySelector('.remove').addEventListener('click', removeAttendee)
+			li.querySelector('.remove').style.display = 'block'
+			camperList.append(li);
+			document.querySelector(`[data-person-id="${personID}"]`).querySelector("input").focus()
+			personID++
+		}
+
+		function removeAttendee() {
+			var targetLi = this.parentElement.parentElement;
+			if (this.parentElement.parentElement.dataset.personId) {
+				targetLi.remove()
+			}
+		}
+
+		function addAttendeeToLiveData(htmlCollection, targetIndex) {
+			liveData[targetIndex] = {}
+			Array.from(htmlCollection).forEach(input => {
+				if (input.type !== "radio") {
+					liveData[targetIndex][input.name] = input.value || ''
+				} else {
+					if (input.checked) {
+						liveData[targetIndex][input.name] = input.value || ''
+					}
+				}
+			})
+		}
+
+
+		document.querySelector("form").addEventListener('submit', submitForm)
+		document.querySelector("#add").addEventListener('click', addAttendeeToForm)
+		//		Array.from(document.querySelectorAll(".remove")).forEach(button => { button.addEventListener('click', removeAttendee) })
+
+		let count = 0
+
+		Mavo.hooks.add({
+			"domexpression-init-start": () => {
+				console.log("I ran", count++)
+			}, "domexpression-update-end": () => {
+				console.log("I ran", count++)
+			}, "unit-isdatanull": () => {
+				console.log("I ran", count++)
+			}, "render-end": () => {
+				camperListItemTemplate = document.querySelector(".camper").outerHTML
+
+				console.log("I ran", count++)
+			}, "init-start": () => {
+				console.log("I ran", count++)
+			}, "init-tree-before": () => {
+				console.log("I ran", count++)
+			}, "node-init-start": () => {
+				console.log("I ran", count++)
+			}, "node-init-end": () => {
+				console.log("I ran", count++)
+			}, "group-init-start": () => {
+				console.log("I ran", count++)
+			}, "primitive-init-start": () => {
+				console.log("I ran", count++)
+			}, "primitive-init-end": () => {
+				console.log("I ran", count++)
+			}, "collection-add-end": () => {
+				console.log("I ran", count++)
+			}, "collection-init-end": () => {
+				console.log("I ran", count++)
+			}, "node-edit-end": () => {
+				console.log("I ran", count++)
+			}, "group-init-end": () => {
+				console.log("I ran", count++)
+			}, "init-tree-after": () => {
+				console.log("I ran", count++)
+			}, "init-end": () => {
+				console.log("I ran", count++)
+			}, "node-getdata-end": () => {
+				console.log("I ran", count++)
+			}, "render-start": () => {
+				console.log("I ran", count++)
+			}, "node-render-start": () => {
+				console.log("I ran", count++)
+			}, "node-render-end": () => {
+				console.log("I ran", count++)
+			}
+		})
+
+		// {
+		// 	"render-end": env => {
+		// 		camperListItemTemplate = document.querySelector(".camper").outerHTML
+		// 	}
+		// }
+	</script>
+
+</body>
+
+</html>
