@@ -218,7 +218,7 @@
 				addAttendeeToLiveData(fieldset.elements, index)
 			})
 			document.querySelector("#form-data").value = JSON.stringify(liveData)
-			document.querySelector("name=camper-form-netlify").submit()
+			document.querySelector("[name=camper-form-netlify]").submit()
 			console.log(liveData)
 		}
 
