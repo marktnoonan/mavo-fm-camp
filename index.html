@@ -117,7 +117,7 @@
 
 		<h1 property="title"></h1>
 		<p property="paragraph"></p>
-		<form action="">
+		<form name="camper-form" method="POST" netlify>
 
 			<ul class="camper-list" id="camper-list">
 				<li>
@@ -202,7 +202,7 @@
 		let camperListItemTemplate
 
 		function submitForm(submitEvent) {
-			submitEvent.preventDefault();
+			//submitEvent.preventDefault();
 			liveData = []
 			Array.from(form.querySelectorAll('fieldset')).forEach((fieldset, index) => {
 				addAttendeeToLiveData(fieldset.elements, index)
