@@ -67,7 +67,12 @@
 			padding: 12px;
 			border: 1px solid rgba(0, 0, 0, 0.2);
 			border-radius: 50px;
-			color: rgba(50, 50, 50, 0.9)
+			color: rgba(50, 50, 50, 0.9);
+		}
+
+		button:hover {
+			color: #000;
+			border-color: rgba(0, 0, 0, 0.4);
 		}
 
 		.radio {
@@ -109,13 +114,21 @@
 			display: inline-block;
 			transform: translateY(3px)
 		}
+
+		header img {
+			max-width: 450px;
+			margin: 10px auto;
+		}
 	</style>
 </head>
 
 <body>
 	<div mv-app mv-storage="https://github.com/marktnoonan/fm-mavo-data" id="app">
+		<header>
+			<img src="" alt="logo for Songwriting camp" property="header-image">
+			<h1 property="title"></h1>
 
-		<h1 property="title"></h1>
+		</header>
 		<p property="paragraph"></p>
 		<form name="camper-form">
 			<ul class="camper-list" id="camper-list">
@@ -196,10 +209,6 @@
 	<form name="camper-form-netlify" method="POST" hidden netlify>
 		<textarea name="formdata" id="form-data" cols="30" rows="10"></textarea>
 	</form>
-
-
-
-
 	<script src="https://get.mavo.io/mavo.js"></script>
 	<link rel="stylesheet" href="https://get.mavo.io/mavo.css">
 	<script>
