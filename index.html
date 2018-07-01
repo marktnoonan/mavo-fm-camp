@@ -248,7 +248,7 @@
 		function addAttendeeToLiveData(htmlCollection, targetIndex) {
 			liveData[targetIndex] = {}
 			Array.from(htmlCollection).forEach(input => {
-				if (input.type !== "radio") {
+				if (input.type !== "radio" && input.value !== '') {
 					liveData[targetIndex][input.name] = input.value || ''
 				} else {
 					if (input.checked) {
