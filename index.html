@@ -228,10 +228,10 @@
 			li.querySelector('.remove').addEventListener('click', removeAttendee)
 			li.querySelector('.remove').style.display = 'block'
 			// update the 'name' attribute to include the person id & avoid form confusion later?
-			Array.from(li.querySelectorAll('[name]')).forEach(input => {
-				input.setAttribute('name', input.name + personID)
-			})
-
+			// Array.from(li.querySelectorAll('[name]')).forEach(input => {
+			// 	input.setAttribute('name', input.name + personID)
+			// })
+			// removing this for now 6/30
 
 			camperList.append(li);
 			document.querySelector(`[data-person-id="${personID}"]`).querySelector("input").focus()
@@ -313,11 +313,6 @@
 			}
 		})
 
-		// {
-		// 	"render-end": env => {
-		// 		camperListItemTemplate = document.querySelector(".camper").outerHTML
-		// 	}
-		// }
 	</script>
 
 </body>
